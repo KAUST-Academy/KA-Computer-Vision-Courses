@@ -1,0 +1,78 @@
+name: Update Version and Tag Release 
+on:
+  push:
+    branches:
+      - '*'
+
+jobs:
+  
+  update-version:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Determine version bump type from commit message
+        id: get-bump-type
+        run: |
+          COMMIT_MSG=$(git log -1 --pretty=%B)
+          echo "Commit message: $COMMIT_MSG"
+          
+          if echo "$COMMIT_MSG" | grep -iq '\[major\]'; then
+            echo "bump=major" >> "$GITHUB_OUTPUT"
+          elif echo "$COMMIT_MSG" | grep -iq '\[minor\]'; then
+            echo "bump=minor" >> "$GITHUB_OUTPUT"
+          elif echo "$COMMIT_MSG" | grep -iq '\[patch\]'; then
+            echo "bump=patch" >> "$GITHUB_OUTPUT"
+          else
+            echo "bump=patch" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Update Version
+        run: |
+          chmod +x ./update_version.sh
+          ./update_version.sh ${{ steps.get-bump-type.outputs.bump }}
+
+      - name: Commit and Push Changes
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git remote set-url origin https://x-access-token:${TOKEN}@github.com/${{ github.repository }}.git
+          git add VERSION
+          git commit -m "chore: Auto-update version [skip ci]"
+          git push origin HEAD:${GITHUB_REF#refs/heads/}
+
+      - name: Tag the New Version
+        if: github.ref == 'refs/heads/main' && (contains(github.event.head_commit.message, 'tag-repo') || contains(github.event.head_commit.message, 'tag-release'))
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git remote set-url origin https://x-access-token:${TOKEN}@github.com/${{ github.repository }}.git
+          VERSION=$(cat VERSION)
+          git tag -a "v$VERSION" -m "Release version $VERSION"
+          git push origin "v$VERSION"
+      
+      - name: Create Release
+        if: github.ref == 'refs/heads/main' && contains(github.event.head_commit.message, 'tag-release')
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION=$(cat VERSION)
+          curl -X POST \
+            -H "Authorization: token ${TOKEN}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "tag_name": "'${VERSION}'",
+              "target_commitish": "${GITHUB_REF#refs/heads/}",
+              "name": "Release '${VERSION}'",
+              "body": "Auto-generated release for version '${VERSION}'.",
+              "draft": false,
+              "prerelease": false
+            }' \
+            https://api.github.com/repos/${{ github.repository }}/releases
