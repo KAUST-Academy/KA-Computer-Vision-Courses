@@ -1,0 +1,24 @@
+{
+  // Ensures LaTeX-Workshop uses latexmk from your TeX install
+  "latex-workshop.latex.tools": [
+    {
+      "name": "latexmk",
+      "command": "latexmk",
+      "env": {
+        "PATH": "/usr/local/texlive/2024/bin/x86_64-linux:${env:PATH}"
+      },
+      "args": [
+        "-pdf",
+        "-interaction=nonstopmode",
+        "-file-line-error",
+        "%DOC%"
+      ]
+    }
+  ],
+  "latex-workshop.latex.recipes": [
+    {
+      "name": "latexmk 🔃",
+      "tools": ["latexmk"]
+    }
+  ]
+}
