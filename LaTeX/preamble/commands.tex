@@ -1,0 +1,25 @@
+% Custom commands
+\newcommand{\R}{\mathbb{R}}
+\renewcommand{\thealgocf}{}
+
+% Crossmarks & checkmarks
+\newcommand{\cmark}{\ding{51}}
+\newcommand{\xmark}{\ding{55}}
+
+% Colored emphasis
+\newcommand{\empy}[1]{{\color{darkorange}\emph{#1}}}
+\newcommand{\empr}[1]{{\color{blue}\emph{#1}}}
+
+% Example box
+\newcommand{\examplebox}[2]{
+\begin{tcolorbox}[colframe=darkcardinal,colback=boxgray,title=#1]
+#2
+\end{tcolorbox}}
+
+% Theorem environments
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+\theoremstyle{definition}
+
+% Glossary entries
+\newacronym{ML}{ML}{machine learning} 
