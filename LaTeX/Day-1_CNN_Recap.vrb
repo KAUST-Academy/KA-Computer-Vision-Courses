@@ -1,0 +1,23 @@
+\frametitle{CNN - Convolutional Layer}
+\begin{block}{Operation:}
+    \begin{itemize}
+        \item Element‑wise multiply filter with image patch and sum → feature map.
+    \end{itemize}
+\end{block}
+
+\begin{block}{Hyperparameters:}
+    \begin{itemize}
+        \item kernel size
+        \item number of filters
+        \item stride
+        \item padding
+    \end{itemize}
+\end{block}
+
+\begin{lstlisting}[language=Python, caption={Code snippet (PyTorch)}]
+import torch.nn as nn
+
+conv = nn.Conv2d(in_channels=3, out_channels=16, kernel_size=3, stride=1, padding=1)
+
+output = conv(input_tensor)  # input_tensor: [batch_size, 3, H, W]
+\end{lstlisting}
