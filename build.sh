@@ -45,6 +45,6 @@ fi
 # Clean up auxiliary files
 echo "Cleaning up auxiliary files..."
 latexmk -C
-rm -r *.nav *.snm *.out *.toc *.aux *.log *.fdb_latexmk *.fls
+rm -r *.nav *.snm *.out *.toc *.aux *.log *.fdb_latexmk *.fls *.vrb *.bcf *.run.xml *.synctex.gz || { echo "Error: Could not clean auxiliary files"; exit 1; }
 
 echo "Build completed successfully!" 

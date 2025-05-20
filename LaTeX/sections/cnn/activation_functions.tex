@@ -18,9 +18,7 @@
 import torch.nn.functional as F
 
 x = conv(input_tensor)
-
 x = F.relu(x)              # ReLU
-
 x = F.leaky_relu(x, 0.1)   # Leaky ReLU
 \end{lstlisting}
 \end{frame}  
