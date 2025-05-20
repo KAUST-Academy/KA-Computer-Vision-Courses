@@ -33,7 +33,7 @@ cd "$SCRIPT_DIR/LaTeX" || { echo "Error: Could not find template directory"; exi
 # Build the PDF
 echo "Building PDF..."
 # latexmk -f -pdf *.tex || echo "Warning: PDF build had issues but continuing..."
-latexmk -pdf -interaction=nonstopmode -file-line-error -bibtex -use-make *.tex || echo "Warning: PDF build had issues but continuing..."
+latexmk -pdf -shell-escape -interaction=nonstopmode -file-line-error -bibtex -use-make *.tex || echo "Warning: PDF build had issues but continuing..."
 
 
 # Move the PDF to the specified output directory
