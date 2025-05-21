@@ -12,11 +12,33 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Required to fetch all history for changelog generation
 
       - name: Set up Git
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Generate Changelog
+        uses: TriPSs/conventional-changelog-action@v3 # Corrected action name
+        with:
+          git-message: "chore(release): update changelog for ${{ github.sha }}" # Custom commit message
+          output-file: "CHANGELOG.md" # Output file name
+          skip-on-empty: true
+
+      - name: Commit and Push CHANGELOG Changes
+        run: |
+          git add CHANGELOG.md
+          
+          # Check if there are any changes to commit
+          if ! git diff --cached --exit-code; then
+            git commit -m "chore(changelog): Automated changelog update [skip ci]"
+            git push
+            echo "Changelog updated and pushed."
+          else
+            echo "No changes to commit. Changelog is up to date."
+          fi
 
       - name: Determine version bump type from commit message
         id: get-bump-type
@@ -39,7 +61,7 @@ jobs:
           chmod +x ./update_version.sh
           ./update_version.sh ${{ steps.get-bump-type.outputs.bump }}
 
-      - name: Commit and Push Changes
+      - name: Commit and Push VERSION_UPDATE Changes
         env:
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
