@@ -17,6 +17,17 @@
   }%
 }
 
+% Robust macro to fetch and convert web image to PNG for LaTeX
+% Requires shell-escape, curl, and ImageMagick (convert)
+\newcommand{\fetchconvertimage}[3]{%
+  \IfFileExists{#2}{}{%
+    \immediate\write18{curl -sL "#1" -o "temp_image_download"}%
+    \immediate\write18{convert temp_image_download "#2"}%
+    \immediate\write18{rm -f temp_image_download}%
+  }%
+  \includegraphics[#3]{#2}%
+}
+
 
 % Example box
 \newcommand{\examplebox}[2]{
