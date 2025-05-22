@@ -1,4 +1,13 @@
-# 0.1.0 (2025-05-21)
+# [0.2.0](https://github.com/KAUST-Academy/KA-Computer-Vision-Courses/compare/v0.1.0...v0.2.0) (2025-05-22)
+
+
+### Features
+
+* Add cover and credits sections to LaTeX presentations for Day 1 and Day 2 ([a7f057b](https://github.com/KAUST-Academy/KA-Computer-Vision-Courses/commit/a7f057bf22ff44eb740348617bfe27100975a9dc))
+
+
+
+# [0.1.0](https://github.com/KAUST-Academy/KA-Computer-Vision-Courses/compare/37a3ffb35c820d2aea22933a816401b4fdbe4f9d...v0.1.0) (2025-05-21)
 
 
 ### Features
