@@ -21,7 +21,7 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Generate Changelog
-        uses: TriPSs/conventional-changelog-action@v3 # Corrected action name
+        uses: TriPSs/conventional-changelog-action@v3 # Use the latest version of the action
         with:
           git-message: "chore(release): update changelog for ${{ github.sha }}" # Custom commit message
           output-file: "CHANGELOG.md" # Output file name
