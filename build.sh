@@ -7,6 +7,7 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
 # Default output directory is the current directory
 OUTPUT_DIR="Lectures"
+TEX_FILE=""
 
 # Parse command line arguments
 while [[ $# -gt 0 ]]; do
@@ -15,8 +16,13 @@ while [[ $# -gt 0 ]]; do
       OUTPUT_DIR="$2"
       shift 2
       ;;
+    --file)
+      TEX_FILE="$2"
+      shift 2
+      ;;
     *)
       echo "Unknown option: $1"
+      echo "Usage: $0 [--file filename.tex] [--output output_dir]"
       exit 1
       ;;
   esac
@@ -32,14 +38,29 @@ cd "$SCRIPT_DIR/LaTeX" || { echo "Error: Could not find template directory"; exi
 
 # Build the PDF
 echo "Building PDF..."
+if [ -n "$TEX_FILE" ]; then
+  if [ ! -f "$TEX_FILE" ]; then
+    echo "Error: Specified file '$TEX_FILE' not found."
+    exit 1
+  fi
+  latexmk -pdf -shell-escape -interaction=nonstopmode -file-line-error -bibtex -use-make "$TEX_FILE" || echo "Warning: PDF build had issues but continuing..."
+else
+  latexmk -pdf -shell-escape -interaction=nonstopmode -file-line-error -bibtex -use-make *.tex || echo "Warning: PDF build had issues but continuing..."
+fi
 # latexmk -f -pdf *.tex || echo "Warning: PDF build had issues but continuing..."
-latexmk -pdf -shell-escape -interaction=nonstopmode -file-line-error -bibtex -use-make *.tex || echo "Warning: PDF build had issues but continuing..."
+# latexmk -pdf -shell-escape -interaction=nonstopmode -file-line-error -bibtex -use-make *.tex || echo "Warning: PDF build had issues but continuing..."
 
 
 # Move the PDF to the specified output directory
 if [ "$OUTPUT_DIR" != "." ]; then
   echo "Moving PDFs to $OUTPUT_DIR/"
-  mv *.pdf "../$OUTPUT_DIR/" || { echo "Error: Could not move PDF"; exit 1; }
+  if [ -n "$TEX_FILE" ]; then
+    PDF_NAME="${TEX_FILE%.tex}.pdf"
+    mv "$PDF_NAME" "../$OUTPUT_DIR/" || { echo "Error: Could not move PDF"; exit 1; }
+  else
+    mv *.pdf "../$OUTPUT_DIR/" || { echo "Error: Could not move PDFs"; exit 1; }
+  fi
+  # mv *.pdf "../$OUTPUT_DIR/" || { echo "Error: Could not move PDF"; exit 1; }
 fi
 
 # Clean up auxiliary files
